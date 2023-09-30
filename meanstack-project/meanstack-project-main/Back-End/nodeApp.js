@@ -2,9 +2,11 @@ import express from "express";
 import cors from "cors";
 import { dbConnection } from "./database/dbConnection.js";
 import { productModel } from "./database/models/product.model.js";
+import { mobilesModel } from "./database/models/mobiles.model.js";
 import { cartModel } from "./database/models/cart.model.js";
 import { gameModel } from "./database/models/games.js";
 import { gameModel } from "./database/models/games.js";
+
 const app = express();
 const port = 3000;
 app.use(cors());
@@ -93,6 +95,41 @@ app.post("/products/search", async function (req, res) {
     res.json({ message: "NO product MATCHED" });
   }
 });
+
+// Get all mobiles by //ABANOUB ABOELSAAD
+app.get("/mobiles", async function (req, res) {
+  try {
+    const getAllMobiles = await mobilesModel.find({ id: { $gte: 1, $lte: 9} });
+    if (getAllMobiles && getAllMobiles.length > 0) {
+      res.send(getAllMobiles);
+    } else {
+      res.json({ message: "No mobiles found" });
+    }
+  } catch (error) {
+    console.error("Error fetching mobiles:", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+});
+
+// Get mobile by ID BY// ABANOUB ABOELSAAD
+app.get("/mobiles/:mobilesId", async function (req, res) {
+  const mobileId = parseInt(req.params.mobilesId, 10);
+
+  try {
+    const getSingleMobile = await mobilesModel.findOne({ id: mobileId });
+
+    if (getSingleMobile) {
+      res.send(getSingleMobile);
+    } else {
+      res.status(404).json({ message: "Mobile not found" });
+    }
+  } catch (error) {
+    console.error("Error fetching mobile by ID:", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+});
+
+
 
 //...........................get games .................................
 app.get("/games", async function (req, res) {
